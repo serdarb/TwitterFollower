@@ -1,4 +1,4 @@
-﻿namespace TwitterFollower.Web.Models
+﻿namespace TwitterFollower.Service
 {
     public class Tweet
     {
@@ -7,5 +7,6 @@
         public string What { get; set; }
         public string When { get; set; }
         public string Where { get; set; }
+        
     }
 }

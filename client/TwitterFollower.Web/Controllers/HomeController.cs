@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using TwitterFollower.Web.Models;
 
 namespace TwitterFollower.Web.Controllers
 {
@@ -6,7 +8,11 @@ namespace TwitterFollower.Web.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var list = new List<Tweet>();
+
+
+
+            return View(list);
         }
     }
 }
