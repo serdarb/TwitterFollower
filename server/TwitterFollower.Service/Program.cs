@@ -1,15 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ServiceProcess;
 
 namespace TwitterFollower.Service
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
+            if (Environment.UserInteractive)
+            {
+                Bootstrapper.Initialize();
+                Console.WriteLine("Service is ready!");
+                Console.ReadLine();
+            }
+            else
+            {
+                ServiceBase.Run(new ServiceBase[] { new TwitterFollowerWindowsService() });
+            }
         }
     }
 }

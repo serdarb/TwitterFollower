@@ -1,4 +1,4 @@
-﻿namespace TwitterFollower.Service
+﻿namespace TwitterFollower.Service.Domain
 {
     public class Tweet
     {
