@@ -4,7 +4,6 @@ namespace TwitterFollower.Service
 {
     internal class Business
     {
-
         public static void DoWork()
         {
 
