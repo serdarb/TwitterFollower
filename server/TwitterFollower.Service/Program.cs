@@ -9,8 +9,9 @@ namespace TwitterFollower.Service
         {
             if (Environment.UserInteractive)
             {
-                Bootstrapper.Initialize();
-                Console.WriteLine("Service is ready!");
+                Console.WriteLine("Service is starting!");
+                Business.DoWork();
+                Console.WriteLine("Service started!");
                 Console.ReadLine();
             }
             else

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using TwitterFollower.Web.Models;
+using TwitterFollower.Domain;
 
 namespace TwitterFollower.Web.Controllers
 {

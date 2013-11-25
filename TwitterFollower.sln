@@ -18,6 +18,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{15B137
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{EFDC7528-6ED9-41B1-B426-23DD4A89B7FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitterFollower.Domain", "domain\TwitterFollower.Domain\TwitterFollower.Domain.csproj", "{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,10 @@ Global
 		{5222FEAF-C4C7-4443-980D-2C15289D5D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5222FEAF-C4C7-4443-980D-2C15289D5D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5222FEAF-C4C7-4443-980D-2C15289D5D2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,5 +47,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5222FEAF-C4C7-4443-980D-2C15289D5D2A} = {6067B37D-C7FE-4D1E-8B9F-2FA2C4271513}
 		{4223F47A-D181-42A1-AD2E-D4F83BE5D5D7} = {6928682C-D453-4CBA-A33E-FE94FB01EF0E}
+		{7D41EE90-8948-4157-94B9-3ABEEEC6C3CB} = {EFDC7528-6ED9-41B1-B426-23DD4A89B7FC}
 	EndGlobalSection
 EndGlobal

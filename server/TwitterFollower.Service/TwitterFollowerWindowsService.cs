@@ -13,7 +13,7 @@ namespace TwitterFollower.Service
         protected override void OnStart(string[] args)
         {
             EventLog.WriteEntry("Service Starting", EventLogEntryType.Information);
-            Bootstrapper.Initialize();
+            Business.DoWork();
             EventLog.WriteEntry("Service Started", EventLogEntryType.Information);
         }
 
