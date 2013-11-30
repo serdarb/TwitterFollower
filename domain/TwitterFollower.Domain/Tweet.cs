@@ -8,9 +8,12 @@ namespace TwitterFollower.Domain
         public ObjectId Id{ get; set; }
 
         public string Who { get; set; }
-        public string Image { get; set; }
         public string What { get; set; }
         public string When { get; set; }
         public string Where { get; set; }
+
+        public string Image { get; set; }
+        public string StatusID { get; set; }
+        public string Link { get; set; }
     }
 }
