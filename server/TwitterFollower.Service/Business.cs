@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
@@ -12,13 +11,25 @@ namespace TwitterFollower.Service
 {
     internal class Business
     {
+        public static int Counter { get; set; }
         public static void DoWork()
         {
-            var context = GetTwitterContext();
+            try
+            {
+                var context = GetTwitterContext();
+                var repo = new TweetRepo();
 
-            var repo = new TweetRepo();
-            GetUsersLastTweets(context, repo, new List<string> { "hserdarb", "cmylmz", "DemetAkalin", "isilrecber", "esraceydaersoy", "armanayse", "Niltakipte", "eceerken", "Serdarortacs", "ahmethc" });
+                MyFeed(context, repo);
+            }
+            catch (Exception ex)
+            {
 
+                Console.WriteLine(ex.Message + "\n\n");
+            }
+
+        }
+        private static void MyFeed(TwitterContext context, TweetRepo repo)
+        {
             var stream = context.UserStream.Where(x => x.Type == UserStreamType.User)
                 .StreamingCallback(x =>
                 {
@@ -44,7 +55,8 @@ namespace TwitterFollower.Service
                     string text = obj.text;
                     string userName = obj.user.screen_name;
                     string userImgUrl = obj.user.profile_image_url_https;
-                    var time = DateTime.ParseExact((string)obj.created_at, "ddd MMM dd HH:mm:ss zzz yyyy", CultureInfo.InvariantCulture);
+                    var time = DateTime.ParseExact((string)obj.created_at, "ddd MMM dd HH:mm:ss zzz yyyy",
+                        CultureInfo.InvariantCulture);
                     var time2 = time.ToString("dd MMMM dddd - HH:mm", new CultureInfo("tr-TR"));
 
                     repo.Add(new Tweet
@@ -62,44 +74,6 @@ namespace TwitterFollower.Service
                 })
                 .SingleOrDefault();
         }
-
-        private static void GetUsersLastTweets(TwitterContext context, TweetRepo repo, IEnumerable<string> usernames)
-        {
-            foreach (var username in usernames)
-            {
-                var tweets = context.Status.Where(x => x.Type == StatusType.User && x.ScreenName == username)
-                                           .ToList();
-
-                foreach (var tweet in tweets)
-                {
-                    SaveTweet(repo, tweet);
-                }
-            }
-        }
-
-        private static void SaveTweet(TweetRepo repo, Status tweet)
-        {
-            if (repo.AsQueryable().Any(x => x.StatusID == tweet.StatusID)) return;
-
-            var where = string.Empty;
-            if (tweet.Coordinates.Latitude > double.MinValue
-                && tweet.Coordinates.Longitude > double.MinValue)
-            {
-                where = string.Format("{0},{1}", tweet.Coordinates.Latitude, tweet.Coordinates.Longitude);
-            }
-
-            repo.Add(new Tweet
-            {
-                Link = string.Format("https://twitter.com/{0}/status/{1}", tweet.ScreenName, tweet.StatusID),
-                StatusID = tweet.StatusID,
-                Who = tweet.ScreenName,
-                What = tweet.Text,
-                Image = tweet.User.ProfileImageUrlHttps,
-                When = tweet.CreatedAt.ToString("dd MMMM dddd - HH:mm", new CultureInfo("tr-TR")),
-                Where = where
-            });
-        }
-
         private static TwitterContext GetTwitterContext()
         {
             var auth = new SingleUserAuthorizer
