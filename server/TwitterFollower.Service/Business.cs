@@ -18,8 +18,9 @@ namespace TwitterFollower.Service
             {
                 var context = GetTwitterContext();
                 var repo = new TweetRepo();
+                var repoError = new ApiErrorRepo();
 
-                MyFeed(context, repo);
+                MyFeed(context, repo, repoError);
             }
             catch (Exception ex)
             {
@@ -28,49 +29,79 @@ namespace TwitterFollower.Service
             }
 
         }
-        private static void MyFeed(TwitterContext context, TweetRepo repo)
+        private static void MyFeed(TwitterContext context, TweetRepo repo, ApiErrorRepo repoError)
         {
             var stream = context.UserStream.Where(x => x.Type == UserStreamType.User)
                 .StreamingCallback(x =>
                 {
-                    if (x.Status == TwitterErrorStatus.RequestProcessingException)
+                    try
                     {
-                        var wex = x.Error as WebException;
-                        if (wex != null
-                            && wex.Status == WebExceptionStatus.ConnectFailure)
+                        if (x.Status == TwitterErrorStatus.RequestProcessingException)
                         {
-                            Console.WriteLine(wex.Message + " You might want to reconnect. " + DateTime.Now.ToLongDateString());
+                            var wex = x.Error as WebException;
+                            if (wex != null
+                                && wex.Status == WebExceptionStatus.ConnectFailure)
+                            {
+                                Console.WriteLine(wex.Message + " You might want to reconnect. " + DateTime.Now.ToLongDateString());
+                                repoError.Add(new ApiError
+                                {
+                                    When = DateTime.Now,
+                                    Message = wex.Message + " You might want to reconnect. "
+                                });
+                            }
+
+                            Console.WriteLine(x.Error.ToString());
+                            repoError.Add(new ApiError
+                            {
+                                When = DateTime.Now,
+                                Message = x.Error.ToString()
+                            });
+                            return;
                         }
 
-                        Console.WriteLine(x.Error.ToString());
-                        return;
+                        dynamic obj = JsonConvert.DeserializeObject(x.Content);
+                        if (obj == null || obj.user == null) return;
+
+                        string statusId = obj.id_str;
+                        if (repo.AsQueryable().Any(y => y.StatusID == statusId)) return;
+
+                        string text = obj.text;
+                        string userName = obj.user.screen_name;
+                        string userImgUrl = obj.user.profile_image_url_https;
+                        var time = DateTime.ParseExact((string)obj.created_at, "ddd MMM dd HH:mm:ss zzz yyyy",
+                            CultureInfo.InvariantCulture);
+                        var time2 = time.ToString("dd MMMM dddd - HH:mm", new CultureInfo("tr-TR"));
+
+                        repo.Add(new Tweet
+                        {
+                            Link = string.Format("https://twitter.com/{0}/status/{1}", userName, statusId),
+                            StatusID = statusId,
+                            Who = userName,
+                            What = text,
+                            Image = userImgUrl,
+                            When = time2,
+                            Where = string.Empty
+                        });
+
+                        Console.WriteLine(text + "\n");
                     }
-
-                    dynamic obj = JsonConvert.DeserializeObject(x.Content);
-                    if (obj == null || obj.user == null) return;
-
-                    string statusId = obj.id_str;
-                    if (repo.AsQueryable().Any(y => y.StatusID == statusId)) return;
-
-                    string text = obj.text;
-                    string userName = obj.user.screen_name;
-                    string userImgUrl = obj.user.profile_image_url_https;
-                    var time = DateTime.ParseExact((string)obj.created_at, "ddd MMM dd HH:mm:ss zzz yyyy",
-                        CultureInfo.InvariantCulture);
-                    var time2 = time.ToString("dd MMMM dddd - HH:mm", new CultureInfo("tr-TR"));
-
-                    repo.Add(new Tweet
+                    catch (Exception ex)
                     {
-                        Link = string.Format("https://twitter.com/{0}/status/{1}", userName, statusId),
-                        StatusID = statusId,
-                        Who = userName,
-                        What = text,
-                        Image = userImgUrl,
-                        When = time2,
-                        Where = string.Empty
-                    });
+                        repoError.Add(new ApiError
+                        {
+                            When = DateTime.Now,
+                            Message = ex.Message
+                        });
 
-                    Console.WriteLine(text + "\n");
+                        if (ex.InnerException != null)
+                        {
+                            repoError.Add(new ApiError
+                            {
+                                When = DateTime.Now,
+                                Message = ex.InnerException.Message
+                            });
+                        }
+                    }
                 })
                 .SingleOrDefault();
         }

@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiErrorRepo.cs" />
+    <Compile Include="Error.cs" />
     <Compile Include="Tweet.cs" />
     <Compile Include="TweetRepo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
